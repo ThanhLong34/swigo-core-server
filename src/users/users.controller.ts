@@ -29,18 +29,6 @@ export class UsersController {
     private authService: AuthService,
   ) {}
 
-  @Get('colors/:color')
-  setColor(@Param('color') color: string, @Session() session: any) {
-    session.color = color;
-    console.log('session', session);
-  }
-
-  @Get('colors')
-  getColor(@Session() session: any) {
-    console.log('session', session);
-    return session.color;
-  }
-
   @Get('whoami')
   @UseGuards(AuthGuard)
   whoAmI(@CurrentUser() user: User) {
@@ -49,7 +37,7 @@ export class UsersController {
 
   // Đăng ký
   @Post('signup')
-  async createUser(@Body() payload: CreateUserDto, @Session() session: any) {
+  async signup(@Body() payload: CreateUserDto, @Session() session: any) {
     const user = await this.authService.signup(payload);
     session.userId = user.id;
     return user;
@@ -69,7 +57,7 @@ export class UsersController {
   }
 
   @Get(':id')
-  async findUser(@Param('id') id: string) {
+  async getUser(@Param('id') id: string) {
     const user = await this.usersService.findOne(+id);
     if (!user) {
       throw new NotFoundException('User not found');
@@ -79,7 +67,7 @@ export class UsersController {
   }
 
   @Get()
-  findAllUsers(@Query('email') email: string) {
+  getUserList(@Query('email') email: string) {
     return this.usersService.find(email);
   }
 
