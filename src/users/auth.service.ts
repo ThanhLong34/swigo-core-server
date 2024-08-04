@@ -6,6 +6,7 @@ import {
 import { UsersService } from './users.service';
 import { randomBytes, scrypt as _scrypt } from 'crypto';
 import { promisify } from 'util';
+import { CreateUserDto } from './dtos/create-user.dto';
 
 const scrypt = promisify(_scrypt);
 
@@ -13,9 +14,9 @@ const scrypt = promisify(_scrypt);
 export class AuthService {
   constructor(private usersService: UsersService) {}
 
-  async signup({ email, password }: { email: string; password: string }) {
+  async signup(payload: CreateUserDto) {
     // See if email is in use
-    const users = await this.usersService.find(email);
+    const users = await this.usersService.find(payload.email);
     if (users.length > 0) {
       throw new BadRequestException('User already exists');
     }
@@ -25,21 +26,18 @@ export class AuthService {
     const salt = randomBytes(8).toString('hex');
 
     // Hash the salt and the password together
-    const hash = (await scrypt(password, salt, 32)) as Buffer;
+    const hash = (await scrypt(payload.password, salt, 32)) as Buffer;
 
     // Join the hashed result and the salt together
     const passwordHash = salt + '.' + hash.toString('hex');
 
     // Create a new user and save it
     const newUser = this.usersService.create({
-      email,
+      ...payload,
       password: passwordHash,
     });
 
-    return {
-      id: 1,
-      ...newUser,
-    };
+    return newUser;
   }
 
   async signin({ email, password }: { email: string; password: string }) {

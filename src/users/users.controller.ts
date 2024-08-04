@@ -18,10 +18,9 @@ import { Serialize } from 'src/interceptors/serialize.interceptor';
 import { UserDto } from './dtos/user.dto';
 import { AuthService } from './auth.service';
 import { CurrentUser } from './decorators/current-user.decorator';
-import { User } from './user.entity';
 import { AuthGuard } from 'src/guards/auth.guard';
 
-@Controller('auth')
+@Controller('users')
 @Serialize(UserDto)
 export class UsersController {
   constructor(
@@ -31,7 +30,7 @@ export class UsersController {
 
   @Get('whoami')
   @UseGuards(AuthGuard)
-  whoAmI(@CurrentUser() user: User) {
+  whoAmI(@CurrentUser() user: UserDto) {
     return user;
   }
 
@@ -77,7 +76,7 @@ export class UsersController {
   }
 
   @Delete(':id')
-  removeUser(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+  deleteUser(@Param('id') id: string) {
+    return this.usersService.delete(+id);
   }
 }

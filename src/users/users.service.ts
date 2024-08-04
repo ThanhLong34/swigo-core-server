@@ -1,54 +1,29 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { User } from './user.entity';
+import { Injectable } from '@nestjs/common';
+import { UserDto } from './dtos/user.dto';
+import { UsersRepository } from './users.repository';
+import { CreateUserDto } from './dtos/create-user.dto';
 
 @Injectable()
 export class UsersService {
-  constructor() {}
+  constructor(private usersRepo: UsersRepository) {}
 
-  create(data: { email: string; password: string }) {
-    console.log(data);
-    return data;
+  create(data: CreateUserDto) {
+    return this.usersRepo.create(data);
   }
 
   async findOne(id: number) {
-    if (!id) {
-      return null;
-    }
-
-    const user = new User();
-    user.id = id;
-    user.isAdmin = false;
-    user.email = '';
-    user.password = '';
-
-    return user;
+    return this.usersRepo.findOne(id);
   }
 
   async find(email: string) {
-    return [
-      {
-        email,
-        password: '',
-      },
-    ];
+    return this.usersRepo.find(email);
   }
 
-  async update(id: number, attrs: Partial<User>) {
-    const user = await this.findOne(id);
-    if (!user) {
-      throw new NotFoundException('user not found');
-    }
-
-    Object.assign(user, attrs);
-    return user;
+  async update(id: number, attrs: Partial<UserDto>) {
+    return this.usersRepo.update(id, attrs);
   }
 
-  async remove(id: number) {
-    const user = await this.findOne(id);
-    if (!user) {
-      throw new NotFoundException('user not found');
-    }
-
-    return user;
+  async delete(id: number) {
+    return this.usersRepo.delete(id);
   }
 }

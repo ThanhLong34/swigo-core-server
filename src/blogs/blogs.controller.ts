@@ -5,7 +5,7 @@ import { Serialize } from 'src/interceptors/serialize.interceptor';
 import { BlogDto } from './dtos/blog.dto';
 import { CreateBlogDto } from './dtos/create-report.dto';
 import { CurrentUser } from 'src/users/decorators/current-user.decorator';
-import { User } from 'src/users/user.entity';
+import { UserDto } from 'src/users/dtos/user.dto';
 
 @Controller('blogs')
 export class BlogsController {
@@ -14,7 +14,7 @@ export class BlogsController {
   @Post()
   @UseGuards(AuthGuard)
   @Serialize(BlogDto)
-  createReport(@Body() body: CreateBlogDto, @CurrentUser() user: User) {
+  createReport(@Body() body: CreateBlogDto, @CurrentUser() user: UserDto) {
     return this.blogsService.create(body, user);
   }
 }
