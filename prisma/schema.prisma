@@ -31,7 +31,7 @@ model sys_users {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  uuid      String @unique @ignore
+  uuid      String @unique
   username  String @unique
   password  String
   email     String @unique
