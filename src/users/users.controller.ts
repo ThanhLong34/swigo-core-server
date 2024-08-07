@@ -5,7 +5,6 @@ import {
   Get,
   Patch,
   Param,
-  Query,
   Delete,
   NotFoundException,
   Session,
@@ -16,9 +15,10 @@ import { UsersService } from './users.service';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { Serialize } from 'src/interceptors/serialize.interceptor';
 import { UserDto } from './dtos/user.dto';
-import { AuthService } from './auth.service';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { AuthGuard } from 'src/guards/auth.guard';
+import { SigninDto } from './dtos/signin.dto';
+import { AuthService } from 'src/auth/auth.service';
 
 @Controller('users')
 @Serialize(UserDto)
@@ -34,17 +34,27 @@ export class UsersController {
     return user;
   }
 
+  // Tạo tài khoản
+  @Post()
+  @Serialize(UserDto)
+  @UseGuards(AuthGuard)
+  async createUser(@Body() payload: CreateUserDto, @Session() session: any) {
+    payload.createdBy = session.userId;
+    const user = await this.usersService.create(payload);
+    return user;
+  }
+
   // Đăng ký
   @Post('signup')
   async signup(@Body() payload: CreateUserDto, @Session() session: any) {
-    const user = await this.authService.signup(payload);
+    const user = await this.usersService.create(payload);
     session.userId = user.id;
     return user;
   }
 
   // Đăng nhập
   @Post('signin')
-  async signin(@Body() payload: CreateUserDto, @Session() session: any) {
+  async signin(@Body() payload: SigninDto, @Session() session: any) {
     const user = await this.authService.signin(payload);
     session.userId = user.id;
     return user;
@@ -57,7 +67,7 @@ export class UsersController {
 
   @Get(':id')
   async getUser(@Param('id') id: string) {
-    const user = await this.usersService.findOne(+id);
+    const user = await this.usersService.findById(+id);
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -66,8 +76,8 @@ export class UsersController {
   }
 
   @Get()
-  getUserList(@Query('email') email: string) {
-    return this.usersService.find(email);
+  getUserList() {
+    return this.usersService.findAll();
   }
 
   @Patch(':id')

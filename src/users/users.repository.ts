@@ -8,14 +8,27 @@ export class UsersRepository {
   constructor(private prisma: PrismaService) {}
 
   create(data: CreateUserDto) {
+    console.log(data);
     return this.prisma.users.create({ data });
   }
 
-  async findOne(id: number) {
-    if (!id) {
-      return null;
-    }
+  async findByEmail(email: string) {
+    return this.prisma.users.findFirst({
+      where: {
+        email,
+      },
+    });
+  }
 
+  async findByUsername(username: string) {
+    return this.prisma.users.findFirst({
+      where: {
+        username,
+      },
+    });
+  }
+
+  async findById(id: number) {
     return this.prisma.users.findFirst({
       where: {
         id,
@@ -23,12 +36,12 @@ export class UsersRepository {
     });
   }
 
-  async find(email: string) {
+  async findAll() {
     return this.prisma.users.findMany();
   }
 
   async update(id: number, attrs: Partial<UserDto>) {
-    const user = await this.findOne(id);
+    const user = await this.findById(id);
     if (!user) {
       throw new NotFoundException('user not found');
     }
@@ -37,8 +50,8 @@ export class UsersRepository {
     return user;
   }
 
-  async delete(id: number) {
-    const user = await this.findOne(id);
+  async softDelete(id: number) {
+    const user = await this.findById(id);
     if (!user) {
       throw new NotFoundException('User not found');
     }

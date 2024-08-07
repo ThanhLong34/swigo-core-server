@@ -2,21 +2,34 @@ import { Injectable } from '@nestjs/common';
 import { UserDto } from './dtos/user.dto';
 import { UsersRepository } from './users.repository';
 import { CreateUserDto } from './dtos/create-user.dto';
+import { AuthService } from 'src/auth/auth.service';
 
 @Injectable()
 export class UsersService {
-  constructor(private usersRepo: UsersRepository) {}
+  constructor(
+    private authService: AuthService,
+    private usersRepo: UsersRepository,
+  ) {}
 
-  create(data: CreateUserDto) {
-    return this.usersRepo.create(data);
+  async create(data: CreateUserDto) {
+    const userAuth = await this.authService.signup(data);
+    return this.usersRepo.create(userAuth);
   }
 
-  async findOne(id: number) {
-    return this.usersRepo.findOne(id);
+  async findByEmail(email: string) {
+    return this.usersRepo.findByEmail(email);
   }
 
-  async find(email: string) {
-    return this.usersRepo.find(email);
+  async findByUsername(username: string) {
+    return this.usersRepo.findByUsername(username);
+  }
+
+  async findById(id: number) {
+    return this.usersRepo.findById(id);
+  }
+
+  async findAll() {
+    return this.usersRepo.findAll();
   }
 
   async update(id: number, attrs: Partial<UserDto>) {
@@ -24,6 +37,6 @@ export class UsersService {
   }
 
   async delete(id: number) {
-    return this.usersRepo.delete(id);
+    return this.usersRepo.softDelete(id);
   }
 }

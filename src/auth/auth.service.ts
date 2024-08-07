@@ -3,22 +3,27 @@ import {
   BadRequestException,
   NotFoundException,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
 import { randomBytes, scrypt as _scrypt } from 'crypto';
+import { CreateUserDto } from 'src/users/dtos/create-user.dto';
+import { SigninDto } from 'src/users/dtos/signin.dto';
+import { UsersRepository } from 'src/users/users.repository';
 import { promisify } from 'util';
-import { CreateUserDto } from './dtos/create-user.dto';
 
 const scrypt = promisify(_scrypt);
 
 @Injectable()
 export class AuthService {
-  constructor(private usersService: UsersService) {}
+  constructor(private usersRepo: UsersRepository) {}
 
   async signup(payload: CreateUserDto) {
-    // See if email is in use
-    const users = await this.usersService.find(payload.email);
-    if (users.length > 0) {
-      throw new BadRequestException('User already exists');
+    let user = await this.usersRepo.findByUsername(payload.username);
+    if (user) {
+      throw new BadRequestException('Username already exists');
+    }
+
+    user = await this.usersRepo.findByEmail(payload.email);
+    if (user) {
+      throw new BadRequestException('Email already exists');
     }
 
     // Hash the password
@@ -31,17 +36,14 @@ export class AuthService {
     // Join the hashed result and the salt together
     const passwordHash = salt + '.' + hash.toString('hex');
 
-    // Create a new user and save it
-    const newUser = this.usersService.create({
+    return {
       ...payload,
       password: passwordHash,
-    });
-
-    return newUser;
+    };
   }
 
-  async signin({ email, password }: { email: string; password: string }) {
-    const [user] = await this.usersService.find(email);
+  async signin({ username, password }: SigninDto) {
+    const user = await this.usersRepo.findByUsername(username);
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -53,9 +55,6 @@ export class AuthService {
       throw new BadRequestException('Bad password');
     }
 
-    return {
-      id: 1,
-      ...user,
-    };
+    return user;
   }
 }

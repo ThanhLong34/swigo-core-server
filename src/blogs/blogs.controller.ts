@@ -12,8 +12,8 @@ export class BlogsController {
   constructor(private readonly blogsService: BlogsService) {}
 
   @Post()
-  @UseGuards(AuthGuard)
   @Serialize(BlogDto)
+  @UseGuards(AuthGuard)
   createReport(@Body() body: CreateBlogDto, @CurrentUser() user: UserDto) {
     return this.blogsService.create(body, user);
   }
