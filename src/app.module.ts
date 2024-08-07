@@ -8,6 +8,7 @@ import { AppService } from './app.service';
 import { BlogsModule } from './blogs/blogs.module';
 import { UsersModule } from './users/users.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { PrismaModule } from './prisma/prisma.module';
       isGlobal: true,
       envFilePath: `.env.${process.env.NODE_ENV}`,
     }),
+    AuthModule,
     UsersModule,
     BlogsModule,
     PrismaModule,

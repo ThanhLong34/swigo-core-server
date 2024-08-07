@@ -1,15 +1,9 @@
-/*
-  Warnings:
-
-  - You are about to drop the `user` table. If the table is not empty, all the data it contains will be lost.
-
-*/
--- DropTable
-DROP TABLE `user`;
-
 -- CreateTable
 CREATE TABLE `Users` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `createdBy` INTEGER NOT NULL DEFAULT 0,
+    `updatedBy` INTEGER NOT NULL DEFAULT 0,
+    `deletedBy` INTEGER NOT NULL DEFAULT 0,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
     `deletedAt` DATETIME(3) NULL,
