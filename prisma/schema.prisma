@@ -13,19 +13,97 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Users {
+model sys_authorities {
   id Int @id @default(autoincrement())
 
-  createdBy Int @default(0)
-  updatedBy Int @default(0)
-  deletedBy Int @default(0)
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
 
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
+  name      String @unique
+  parent_id Int
+}
 
-  username    String @unique
-  email       String @unique
-  password    String
-  displayName String
+model sys_users {
+  id Int @id @default(autoincrement())
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  uuid      String @unique
+  username  String @unique
+  password  String
+  email     String @unique
+  nick_name String
+}
+
+model sys_apis {
+  id Int @id @default(autoincrement())
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  path        String @unique
+  description String
+  group       String
+  method      String
+}
+
+model sys_menus {
+  id Int @id @default(autoincrement())
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  name      String  @unique
+  path      String  @unique
+  hidden    Boolean @default(false)
+  icon      String
+  title     String
+  sort      Int
+  parent_id Int
+}
+
+model sys_buttons {
+  id Int @id @default(autoincrement())
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  name        String @unique
+  description String
+  menu_id     Int
+}
+
+// 1 user có thể được gán nhiều vai trò
+model sys_authorities_users {
+  id           Int @id @default(autoincrement())
+
+  authority_id Int
+  user_id      Int
+}
+
+model sys_authorities_apis {
+  id           Int @id @default(autoincrement())
+
+  authority_id Int
+  api_id       Int
+}
+
+model sys_authorities_menus {
+  id           Int @id @default(autoincrement())
+
+  authority_id Int
+  menu_id      Int
+}
+
+model sys_authorities_buttons {
+  id           Int @id @default(autoincrement())
+
+  authority_id Int
+  button_id    Int
 }
