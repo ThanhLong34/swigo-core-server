@@ -16,34 +16,34 @@ datasource db {
 model sys_authorities {
   id Int @id @default(autoincrement())
 
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  deleted_at DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 
   name      String @unique
-  parent_id Int
+  parentId Int
 }
 
 model sys_users {
   id Int @id @default(autoincrement())
 
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  deleted_at DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 
-  uuid      String @unique
+  uuid      String @unique @ignore
   username  String @unique
   password  String
   email     String @unique
-  nick_name String
+  nickName String
 }
 
 model sys_apis {
   id Int @id @default(autoincrement())
 
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  deleted_at DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 
   path        String @unique
   description String
@@ -54,9 +54,9 @@ model sys_apis {
 model sys_menus {
   id Int @id @default(autoincrement())
 
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  deleted_at DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 
   name      String  @unique
   path      String  @unique
@@ -64,46 +64,46 @@ model sys_menus {
   icon      String
   title     String
   sort      Int
-  parent_id Int
+  parentId Int
 }
 
 model sys_buttons {
   id Int @id @default(autoincrement())
 
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  deleted_at DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 
   name        String @unique
   description String
-  menu_id     Int
+  menuId     Int
 }
 
 // 1 user có thể được gán nhiều vai trò
 model sys_authorities_users {
   id           Int @id @default(autoincrement())
 
-  authority_id Int
-  user_id      Int
+  authorityId Int
+  userId      Int
 }
 
 model sys_authorities_apis {
   id           Int @id @default(autoincrement())
 
-  authority_id Int
-  api_id       Int
+  authorityId Int
+  apiId       Int
 }
 
 model sys_authorities_menus {
   id           Int @id @default(autoincrement())
 
-  authority_id Int
-  menu_id      Int
+  authorityId Int
+  menuId      Int
 }
 
 model sys_authorities_buttons {
   id           Int @id @default(autoincrement())
 
-  authority_id Int
-  button_id    Int
+  authorityId Int
+  buttonId    Int
 }

@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '@/prisma/prisma.service';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UserDto } from './dtos/user.dto';
 
@@ -8,12 +8,12 @@ export class UsersRepository {
   constructor(private prisma: PrismaService) {}
 
   create(data: CreateUserDto) {
-    console.log(data);
-    return this.prisma.users.create({ data });
+    data.uuid = 'uuid-gen';
+    return this.prisma.sys_users.create({ data });
   }
 
   async findByEmail(email: string) {
-    return this.prisma.users.findFirst({
+    return this.prisma.sys_users.findFirst({
       where: {
         email,
       },
@@ -21,7 +21,7 @@ export class UsersRepository {
   }
 
   async findByUsername(username: string) {
-    return this.prisma.users.findFirst({
+    return this.prisma.sys_users.findFirst({
       where: {
         username,
       },
@@ -29,7 +29,7 @@ export class UsersRepository {
   }
 
   async findById(id: number) {
-    return this.prisma.users.findFirst({
+    return this.prisma.sys_users.findFirst({
       where: {
         id,
       },
@@ -37,7 +37,7 @@ export class UsersRepository {
   }
 
   async findAll() {
-    return this.prisma.users.findMany();
+    return this.prisma.sys_users.findMany();
   }
 
   async update(id: number, attrs: Partial<UserDto>) {
@@ -56,7 +56,7 @@ export class UsersRepository {
       throw new NotFoundException('User not found');
     }
 
-    return this.prisma.users.delete({
+    return this.prisma.sys_users.delete({
       where: {
         id,
       },

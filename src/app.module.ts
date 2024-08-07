@@ -5,10 +5,14 @@ import { CookieSessionMiddleware } from './middlewares/cookie-session.middleware
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { BlogsModule } from './blogs/blogs.module';
-import { UsersModule } from './users/users.module';
 import { PrismaModule } from './prisma/prisma.module';
-import { AuthModule } from './auth/auth.module';
+
+// Import module system
+import { UsersModule } from '@system/users/users.module';
+import { AuthModule } from '@system/auth/auth.module';
+
+// Import module production
+import { BlogsModule } from '@production/blogs/blogs.module';
 
 @Module({
   imports: [

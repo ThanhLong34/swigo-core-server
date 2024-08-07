@@ -13,12 +13,12 @@ import {
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dtos/update-user.dto';
-import { Serialize } from 'src/interceptors/serialize.interceptor';
+import { Serialize } from '@/interceptors/serialize.interceptor';
 import { UserDto } from './dtos/user.dto';
 import { CurrentUser } from './decorators/current-user.decorator';
-import { AuthGuard } from 'src/guards/auth.guard';
+import { AuthGuard } from '@/guards/auth.guard';
 import { SigninDto } from './dtos/signin.dto';
-import { AuthService } from 'src/auth/auth.service';
+import { AuthService } from '@system/auth/auth.service';
 
 @Controller('users')
 @Serialize(UserDto)
@@ -38,8 +38,7 @@ export class UsersController {
   @Post()
   @Serialize(UserDto)
   @UseGuards(AuthGuard)
-  async createUser(@Body() payload: CreateUserDto, @Session() session: any) {
-    payload.createdBy = session.userId;
+  async createUser(@Body() payload: CreateUserDto) {
     const user = await this.usersService.create(payload);
     return user;
   }
