@@ -7,8 +7,8 @@ import { AuthService } from '@system/auth/auth.service';
 @Injectable()
 export class UsersService {
   constructor(
-    private authService: AuthService,
-    private usersRepo: UsersRepository,
+    private readonly authService: AuthService,
+    private readonly usersRepo: UsersRepository,
   ) {}
 
   async create(data: CreateUserDto) {

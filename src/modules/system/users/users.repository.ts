@@ -5,7 +5,7 @@ import { UserDto } from './dtos/user.dto';
 
 @Injectable()
 export class UsersRepository {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   create(data: CreateUserDto) {
     data.uuid = 'uuid-gen';
