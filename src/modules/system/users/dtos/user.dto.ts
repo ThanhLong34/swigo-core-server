@@ -5,11 +5,14 @@ export class UserDto {
   id: number;
 
   @Expose()
+  uuid?: string;
+
+  @Expose()
   username: string;
 
   @Expose()
   email: string;
 
   @Expose()
-  displayName: string;
+  nickName: string;
 }

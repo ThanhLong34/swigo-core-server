@@ -4,9 +4,9 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { randomBytes, scrypt as _scrypt } from 'crypto';
-import { CreateUserDto } from 'src/users/dtos/create-user.dto';
-import { SigninDto } from 'src/users/dtos/signin.dto';
-import { UsersRepository } from 'src/users/users.repository';
+import { CreateUserDto } from '@system/users/dtos/create-user.dto';
+import { SigninDto } from '@system/users/dtos/signin.dto';
+import { UsersRepository } from '@system/users/users.repository';
 import { promisify } from 'util';
 
 const scrypt = promisify(_scrypt);
