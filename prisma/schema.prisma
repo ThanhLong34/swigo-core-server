@@ -20,7 +20,7 @@ model sys_authorities {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  name      String @unique
+  name     String @unique
   parentId Int
 }
 
@@ -31,10 +31,10 @@ model sys_users {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  uuid      String @unique
-  username  String @unique
-  password  String
-  email     String @unique
+  uuid     String @unique
+  username String @unique
+  password String
+  email    String @unique
   nickName String
 }
 
@@ -58,12 +58,12 @@ model sys_menus {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  name      String  @unique
-  path      String  @unique
-  hidden    Boolean @default(false)
-  icon      String
-  title     String
-  sort      Int
+  name     String  @unique
+  path     String  @unique
+  hidden   Boolean @default(false)
+  icon     String
+  title    String
+  sort     Int
   parentId Int
 }
 
@@ -76,33 +76,33 @@ model sys_buttons {
 
   name        String @unique
   description String
-  menuId     Int
+  menuId      Int
 }
 
 // 1 user có thể được gán nhiều vai trò
 model sys_authorities_users {
-  id           Int @id @default(autoincrement())
+  id Int @id @default(autoincrement())
 
   authorityId Int
   userId      Int
 }
 
 model sys_authorities_apis {
-  id           Int @id @default(autoincrement())
+  id Int @id @default(autoincrement())
 
   authorityId Int
   apiId       Int
 }
 
 model sys_authorities_menus {
-  id           Int @id @default(autoincrement())
+  id Int @id @default(autoincrement())
 
   authorityId Int
   menuId      Int
 }
 
 model sys_authorities_buttons {
-  id           Int @id @default(autoincrement())
+  id Int @id @default(autoincrement())
 
   authorityId Int
   buttonId    Int

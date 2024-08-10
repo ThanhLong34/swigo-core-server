@@ -9,12 +9,12 @@ import { UserDto } from '@system/users/dtos/user.dto';
 
 @Controller('blogs')
 export class BlogsController {
-  constructor(private readonly blogsService: BlogsService) {}
+  constructor(private readonly blogsSrv: BlogsService) {}
 
   @Post()
   @Serialize(BlogDto)
   @UseGuards(AuthGuard)
   createReport(@Body() body: CreateBlogDto, @CurrentUser() user: UserDto) {
-    return this.blogsService.create(body, user);
+    return this.blogsSrv.create(body, user);
   }
 }

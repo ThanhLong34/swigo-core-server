@@ -7,12 +7,12 @@ import { AuthService } from '@system/auth/auth.service';
 @Injectable()
 export class UsersService {
   constructor(
-    private readonly authService: AuthService,
+    private readonly authSrv: AuthService,
     private readonly usersRepo: UsersRepository,
   ) {}
 
   async create(data: CreateUserDto) {
-    const userAuth = await this.authService.signup(data);
+    const userAuth = await this.authSrv.signup(data);
     return this.usersRepo.create(userAuth);
   }
 

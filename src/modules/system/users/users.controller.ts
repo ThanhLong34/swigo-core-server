@@ -24,8 +24,8 @@ import { AuthService } from '@system/auth/auth.service';
 @Serialize(UserDto)
 export class UsersController {
   constructor(
-    private readonly usersService: UsersService,
-    private readonly authService: AuthService,
+    private readonly usersSrv: UsersService,
+    private readonly authSrv: AuthService,
   ) {}
 
   @Get('whoami')
@@ -39,14 +39,14 @@ export class UsersController {
   @Serialize(UserDto)
   @UseGuards(AuthGuard)
   async createUser(@Body() payload: CreateUserDto) {
-    const user = await this.usersService.create(payload);
+    const user = await this.usersSrv.create(payload);
     return user;
   }
 
   // Đăng ký
   @Post('signup')
   async signup(@Body() payload: CreateUserDto, @Session() session: any) {
-    const user = await this.usersService.create(payload);
+    const user = await this.usersSrv.create(payload);
     session.userId = user.id;
     return user;
   }
@@ -54,7 +54,7 @@ export class UsersController {
   // Đăng nhập
   @Post('signin')
   async signin(@Body() payload: SigninDto, @Session() session: any) {
-    const user = await this.authService.signin(payload);
+    const user = await this.authSrv.signin(payload);
     session.userId = user.id;
     return user;
   }
@@ -66,7 +66,7 @@ export class UsersController {
 
   @Get(':id')
   async getUser(@Param('id') id: string) {
-    const user = await this.usersService.findById(+id);
+    const user = await this.usersSrv.findById(+id);
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -76,16 +76,16 @@ export class UsersController {
 
   @Get()
   getUserList() {
-    return this.usersService.findAll();
+    return this.usersSrv.findAll();
   }
 
   @Patch(':id')
   updateUser(@Param('id') id: string, @Body() payload: UpdateUserDto) {
-    return this.usersService.update(+id, payload);
+    return this.usersSrv.update(+id, payload);
   }
 
   @Delete(':id')
   deleteUser(@Param('id') id: string) {
-    return this.usersService.delete(+id);
+    return this.usersSrv.delete(+id);
   }
 }

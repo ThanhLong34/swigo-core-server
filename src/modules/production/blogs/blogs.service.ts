@@ -5,8 +5,6 @@ import { UserDto } from '@system/users/dtos/user.dto';
 @Injectable()
 export class BlogsService {
   create(reportDto: CreateBlogDto, user: UserDto) {
-    console.log(reportDto);
-    console.log(user);
     return {
       message: 'Blog created successfully',
     };
