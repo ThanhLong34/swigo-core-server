@@ -11,12 +11,12 @@ export class AuthoritiesService extends BaseService {
 
   async create(data: any) {
     const _data = data as CreateAuthoritiesDto;
-    const authority = await this.authoritiesRepo.findOne('name', _data.name);
 
+    const authority = await this.authoritiesRepo.findOne('name', _data.name);
     if (authority) {
-      return new BadRequestException('Authority already exists');
+      throw new BadRequestException('Authority already exists');
     }
 
-    return await this.authoritiesRepo.create(data);
+    return await super.create(data);
   }
 }
