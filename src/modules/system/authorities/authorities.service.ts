@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { AuthoritiesRepository } from './authorities.repository';
 import { BaseService } from '@/core/base.service';
+import { CreateAuthoritiesDto } from './dtos/create-authorities.dto';
 
 @Injectable()
 export class AuthoritiesService extends BaseService {
@@ -9,15 +10,13 @@ export class AuthoritiesService extends BaseService {
   }
 
   async create(data: any) {
-    const authority = await this.authoritiesRepo.findOne(
-      'name',
-      data.authority,
-    );
+    const _data = data as CreateAuthoritiesDto;
 
+    const authority = await this.authoritiesRepo.findOne('name', _data.name);
     if (authority) {
-      return new BadRequestException('Authority already exists');
+      throw new BadRequestException('Authority already exists');
     }
 
-    return await this.authoritiesRepo.create(data);
+    return await super.create(data);
   }
 }
