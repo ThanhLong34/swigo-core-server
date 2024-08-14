@@ -17,4 +17,12 @@ export class BaseRepository {
       },
     });
   }
+
+  async findMany(k: string, v: any) {
+    return await this.prisma[this.tableName].findMany({
+      where: {
+        [k]: v,
+      },
+    });
+  }
 }

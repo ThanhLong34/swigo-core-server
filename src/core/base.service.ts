@@ -8,4 +8,8 @@ export class BaseService {
   async findOne(k: string, v: any) {
     return await this.repo.findOne(k, v);
   }
+
+  async findMany(k: string, v: any) {
+    return await this.repo.findMany(k, v);
+  }
 }
