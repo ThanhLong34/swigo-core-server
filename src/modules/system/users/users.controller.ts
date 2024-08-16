@@ -3,13 +3,12 @@ import {
   Post,
   Body,
   Get,
-  Patch,
   Param,
   Delete,
-  NotFoundException,
   Session,
   UseGuards,
   Query,
+  Put,
 } from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UsersService } from './users.service';
@@ -33,48 +32,91 @@ export class UsersController {
 
   @Get('whoami')
   @UseGuards(AuthGuard)
-  whoAmI(@CurrentUser() user: UserDto) {
-    return user;
+  async whoAmI(@CurrentUser() user: UserDto): Promise<Response> {
+    return {
+      code: ResponseCode.OK,
+      message: 'Who am I',
+      data: user,
+    };
   }
 
   // Tạo tài khoản
   @Post()
   @Serialize(UserDto)
   @UseGuards(AuthGuard)
-  async createUser(@Body() payload: CreateUserDto) {
-    const user = await this.usersSrv.create(payload);
-    return user;
+  async create(@Body() data: CreateUserDto): Promise<Response> {
+    try {
+      const result = await this.usersSrv.create(data);
+      return {
+        code: ResponseCode.OK,
+        message: 'Created successfully',
+        data: result,
+      };
+    } catch (err) {
+      return {
+        code: ResponseCode.FAILED,
+        message: err.message,
+        data: null,
+      };
+    }
   }
 
   // Đăng ký
   @Post('signup')
-  async signup(@Body() payload: CreateUserDto, @Session() session: any) {
-    const user = await this.usersSrv.create(payload);
-    session.userId = user.id;
-    return user;
+  async signup(
+    @Body() payload: CreateUserDto,
+    @Session() session: any,
+  ): Promise<Response> {
+    try {
+      const result = await this.usersSrv.create(payload);
+      session.userId = result.id;
+
+      return {
+        code: ResponseCode.OK,
+        message: 'Signup successfully',
+        data: result,
+      };
+    } catch (err) {
+      return {
+        code: ResponseCode.FAILED,
+        message: err.message,
+        data: null,
+      };
+    }
   }
 
   // Đăng nhập
   @Post('signin')
-  async signin(@Body() payload: SigninDto, @Session() session: any) {
-    const user = await this.authSrv.signin(payload);
-    session.userId = user.id;
-    return user;
+  async signin(
+    @Body() payload: SigninDto,
+    @Session() session: any,
+  ): Promise<Response> {
+    try {
+      const result = await this.authSrv.signin(payload);
+      session.userId = result.id;
+
+      return {
+        code: ResponseCode.OK,
+        message: 'Signin successfully',
+        data: result,
+      };
+    } catch (err) {
+      return {
+        code: ResponseCode.FAILED,
+        message: err.message,
+        data: null,
+      };
+    }
   }
 
   @Post('signout')
-  signout(@Session() session: any) {
+  async signout(@Session() session: any): Promise<Response> {
     session.userId = null;
-  }
-
-  @Get(':id')
-  async getUser(@Param('id') id: string) {
-    const user = await this.usersSrv.findById(+id);
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    return user;
+    return {
+      code: ResponseCode.OK,
+      message: 'Signout successfully',
+      data: null,
+    };
   }
 
   @Get()
@@ -114,13 +156,62 @@ export class UsersController {
     }
   }
 
-  @Patch(':id')
-  updateUser(@Param('id') id: string, @Body() payload: UpdateUserDto) {
-    return this.usersSrv.update(+id, payload);
+  @Get(':id')
+  async findById(@Param('id') id: string): Promise<Response> {
+    try {
+      const result = await this.usersSrv.findOne('id', +id);
+      return {
+        code: ResponseCode.OK,
+        message: 'Found',
+        data: result,
+      };
+    } catch (err) {
+      return {
+        code: ResponseCode.FAILED,
+        message: err.message,
+        data: null,
+      };
+    }
+  }
+
+  @Put(':id')
+  @Serialize(UserDto)
+  @UseGuards(AuthGuard)
+  async update(
+    @Param('id') id: string,
+    @Body() data: UpdateUserDto,
+  ): Promise<Response> {
+    try {
+      const result = await this.usersSrv.update(+id, data);
+      return {
+        code: ResponseCode.OK,
+        message: 'Updated successfully',
+        data: result,
+      };
+    } catch (err) {
+      return {
+        code: ResponseCode.FAILED,
+        message: err.message,
+        data: null,
+      };
+    }
   }
 
   @Delete(':id')
-  deleteUser(@Param('id') id: string) {
-    return this.usersSrv.delete(+id);
+  async delete(@Param('id') id: string): Promise<Response> {
+    try {
+      const result = await this.usersSrv.softDelete(+id);
+      return {
+        code: ResponseCode.OK,
+        message: 'Deleted successfully',
+        data: result,
+      };
+    } catch (err) {
+      return {
+        code: ResponseCode.FAILED,
+        message: err.message,
+        data: null,
+      };
+    }
   }
 }
