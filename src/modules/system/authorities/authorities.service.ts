@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { AuthoritiesRepository } from './authorities.repository';
 import { BaseService } from '@/core/base.service';
-import { CreateAuthoritiesDto } from './dtos/create-authorities.dto';
+import { CreateAuthorityDto } from './dtos/create-authority.dto';
 
 @Injectable()
 export class AuthoritiesService extends BaseService {
@@ -10,7 +10,7 @@ export class AuthoritiesService extends BaseService {
   }
 
   async create(data: any) {
-    const _data = data as CreateAuthoritiesDto;
+    const _data = data as CreateAuthorityDto;
 
     const authority = await this.authoritiesRepo.findOne('name', _data.name);
     if (authority) {

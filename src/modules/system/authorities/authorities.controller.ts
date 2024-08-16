@@ -9,8 +9,8 @@ import {
   Query,
 } from '@nestjs/common';
 import { AuthoritiesService } from './authorities.service';
-import { CreateAuthoritiesDto } from './dtos/create-authorities.dto';
-import { UpdateAuthoritiesDto } from './dtos/update-authorities.dto';
+import { CreateAuthorityDto } from './dtos/create-authority.dto';
+import { UpdateAuthorityDto } from './dtos/update-authority.dto';
 import { Response } from '@/interfaces/response/response.interface';
 import { ResponseCode } from '@/enums/response.enum';
 
@@ -19,7 +19,7 @@ export class AuthoritiesController {
   constructor(private readonly authoritiesSrv: AuthoritiesService) {}
 
   @Post()
-  async create(@Body() data: CreateAuthoritiesDto): Promise<Response> {
+  async create(@Body() data: CreateAuthorityDto): Promise<Response> {
     try {
       const result = await this.authoritiesSrv.create(data);
       return {
@@ -88,7 +88,7 @@ export class AuthoritiesController {
   @Put(':id')
   async update(
     @Param('id') id: string,
-    @Body() data: UpdateAuthoritiesDto,
+    @Body() data: UpdateAuthorityDto,
   ): Promise<Response> {
     try {
       const result = await this.authoritiesSrv.update(+id, data);
