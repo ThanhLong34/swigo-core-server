@@ -1,65 +1,37 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/prisma/prisma.service';
-import { CreateUserDto } from './dtos/create-user.dto';
-import { UserDto } from './dtos/user.dto';
+import { BaseRepository } from '@/core/base.repository';
+import { PageInfo } from '@/types/request/page-info.type';
+import { QueryMetadata } from '@/types/request/query-metadata.type';
+import { User } from './users.type';
 
 @Injectable()
-export class UsersRepository {
-  constructor(private readonly prisma: PrismaService) {}
-
-  create(data: CreateUserDto) {
-    data.uuid = 'uuid-gen';
-    return this.prisma.sys_users.create({ data });
+export class UsersRepository extends BaseRepository {
+  constructor(protected readonly prisma: PrismaService) {
+    super(prisma, 'sys_users' /* table name */);
   }
 
-  async findByEmail(email: string) {
-    return this.prisma.sys_users.findFirst({
-      where: {
-        email,
-      },
-    });
-  }
+  async findMany(pageInfo: PageInfo & User) {
+    const queryMetadata: QueryMetadata = {
+      where: {},
+    };
 
-  async findByUsername(username: string) {
-    return this.prisma.sys_users.findFirst({
-      where: {
-        username,
-      },
-    });
-  }
-
-  async findById(id: number) {
-    return this.prisma.sys_users.findFirst({
-      where: {
-        id,
-      },
-    });
-  }
-
-  async findAll() {
-    return this.prisma.sys_users.findMany();
-  }
-
-  async update(id: number, attrs: Partial<UserDto>) {
-    const user = await this.findById(id);
-    if (!user) {
-      throw new NotFoundException('user not found');
+    if (pageInfo.uuid) {
+      queryMetadata.where.uuid = pageInfo.uuid;
     }
 
-    Object.assign(user, attrs);
-    return user;
-  }
-
-  async softDelete(id: number) {
-    const user = await this.findById(id);
-    if (!user) {
-      throw new NotFoundException('User not found');
+    if (pageInfo.username) {
+      queryMetadata.where.username = pageInfo.username;
     }
 
-    return this.prisma.sys_users.delete({
-      where: {
-        id,
-      },
-    });
+    if (pageInfo.email) {
+      queryMetadata.where.email = pageInfo.email;
+    }
+
+    if (pageInfo.nickName) {
+      queryMetadata.where.nickName = pageInfo.nickName;
+    }
+
+    return await super.findMany(pageInfo, queryMetadata);
   }
 }
