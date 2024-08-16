@@ -1,4 +1,5 @@
 import { PageInfo } from '@/interfaces/request/page-info.interface';
+import { QueryMetadata } from '@/interfaces/request/query-metadata.interface';
 import { PrismaService } from '@/prisma/prisma.service';
 
 export class BaseRepository {
@@ -20,12 +21,8 @@ export class BaseRepository {
     });
   }
 
-  async findMany(pageInfo: PageInfo) {
-    const queryMetadata: any = {
-      where: {
-        deletedAt: null,
-      },
-    };
+  async findMany(pageInfo: PageInfo, queryMetadata: QueryMetadata = {}) {
+    queryMetadata.where.deletedAt = null;
 
     if (!pageInfo.getAll) {
       queryMetadata.take = pageInfo.pageSize;
