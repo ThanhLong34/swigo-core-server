@@ -9,6 +9,7 @@ import {
   NotFoundException,
   Session,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UsersService } from './users.service';
@@ -19,6 +20,8 @@ import { CurrentUser } from './decorators/current-user.decorator';
 import { AuthGuard } from '@/guards/auth.guard';
 import { SigninDto } from './dtos/signin.dto';
 import { AuthService } from '@system/auth/auth.service';
+import { ResponseCode } from '@/enums/response.enum';
+import { Response } from '@/types/response/response.type';
 
 @Controller('users')
 @Serialize(UserDto)
@@ -75,8 +78,40 @@ export class UsersController {
   }
 
   @Get()
-  getUserList() {
-    return this.usersSrv.findAll();
+  async findMany(
+    @Query('getAll') getAll: string = '',
+    @Query('pageNumber') pageNumber: string = '',
+    @Query('pageSize') pageSize: string = '',
+    @Query('uuid') uuid: string = '',
+    @Query('username') username: string = '',
+    @Query('email') email: string = '',
+    @Query('nickName') nickName: string = '',
+  ): Promise<Response> {
+    try {
+      const result = await this.usersSrv.findMany({
+        getAll: !!getAll,
+        pageNumber: +pageNumber,
+        pageSize: +pageSize,
+        uuid,
+        username,
+        email,
+        nickName,
+      });
+      return {
+        code: ResponseCode.OK,
+        message: 'Found',
+        data: {
+          list: result,
+          total: result.length,
+        },
+      };
+    } catch (err) {
+      return {
+        code: ResponseCode.FAILED,
+        message: err.message,
+        data: null,
+      };
+    }
   }
 
   @Patch(':id')

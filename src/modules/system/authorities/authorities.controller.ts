@@ -11,7 +11,7 @@ import {
 import { AuthoritiesService } from './authorities.service';
 import { CreateAuthorityDto } from './dtos/create-authority.dto';
 import { UpdateAuthorityDto } from './dtos/update-authority.dto';
-import { Response } from '@/interfaces/response/response.interface';
+import { Response } from '@/types/response/response.type';
 import { ResponseCode } from '@/enums/response.enum';
 
 @Controller('authorities')

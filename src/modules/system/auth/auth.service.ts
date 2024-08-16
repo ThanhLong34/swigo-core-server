@@ -13,7 +13,7 @@ const scrypt = promisify(_scrypt);
 
 @Injectable()
 export class AuthService {
-  constructor(private usersRepo: UsersRepository) {}
+  constructor(private readonly usersRepo: UsersRepository) {}
 
   async signup(payload: CreateUserDto) {
     let user = await this.usersRepo.findByUsername(payload.username);

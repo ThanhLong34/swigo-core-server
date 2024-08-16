@@ -1,5 +1,5 @@
-import { PageInfo } from '@/interfaces/request/page-info.interface';
-import { QueryMetadata } from '@/interfaces/request/query-metadata.interface';
+import { PageInfo } from '@/types/request/page-info.type';
+import { QueryMetadata } from '@/types/request/query-metadata.type';
 import { PrismaService } from '@/prisma/prisma.service';
 
 export class BaseRepository {

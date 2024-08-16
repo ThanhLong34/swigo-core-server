@@ -39,7 +39,7 @@ import { BlogsModule } from '@production/blogs/blogs.module';
   ],
 })
 export class AppModule {
-  constructor(private configService: ConfigService) {}
+  constructor(private readonly configService: ConfigService) {}
 
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(CookieSessionMiddleware).forRoutes('*');

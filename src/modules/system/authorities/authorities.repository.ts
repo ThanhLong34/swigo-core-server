@@ -1,13 +1,13 @@
 import { BaseRepository } from '@/core/base.repository';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/prisma/prisma.service';
-import { PageInfo } from '@/interfaces/request/page-info.interface';
-import { QueryMetadata } from '@/interfaces/request/query-metadata.interface';
-import { Authority } from './authorities.interface';
+import { PageInfo } from '@/types/request/page-info.type';
+import { QueryMetadata } from '@/types/request/query-metadata.type';
+import { Authority } from './authorities.type';
 
 @Injectable()
 export class AuthoritiesRepository extends BaseRepository {
-  constructor(protected prisma: PrismaService) {
+  constructor(protected readonly prisma: PrismaService) {
     super(prisma, 'sys_authorities' /* table name */);
   }
 
