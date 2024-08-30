@@ -3,6 +3,7 @@ import { UsersRepository } from './users.repository';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { AuthService } from '@system/auth/auth.service';
 import { BaseService } from '@/core/base.service';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class UsersService extends BaseService {
@@ -26,7 +27,10 @@ export class UsersService extends BaseService {
       throw new BadRequestException('Email already exists');
     }
 
-    const userAuth = await this.authSrv.signup(data);
+    // Gen uuid
+    _data.uuid = uuidv4();
+
+    const userAuth = await this.authSrv.signup(_data);
     return await super.create(userAuth);
   }
 }

@@ -14,6 +14,7 @@ import { AuthoritiesModule } from './modules/system/authorities/authorities.modu
 
 // Import module production
 import { BlogsModule } from '@production/blogs/blogs.module';
+import { ApisModule } from './modules/system/apis/apis.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { BlogsModule } from '@production/blogs/blogs.module';
     BlogsModule,
     PrismaModule,
     AuthoritiesModule,
+    ApisModule,
   ],
   controllers: [AppController],
   providers: [

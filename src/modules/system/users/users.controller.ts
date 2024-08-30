@@ -13,7 +13,6 @@ import {
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dtos/update-user.dto';
-import { Serialize } from '@/interceptors/serialize.interceptor';
 import { UserDto } from './dtos/user.dto';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { AuthGuard } from '@/guards/auth.guard';
@@ -21,9 +20,9 @@ import { SigninDto } from './dtos/signin.dto';
 import { AuthService } from '@system/auth/auth.service';
 import { ResponseCode } from '@/enums/response.enum';
 import { Response } from '@/types/response/response.type';
+import { plainToClass } from 'class-transformer';
 
 @Controller('users')
-@Serialize(UserDto)
 export class UsersController {
   constructor(
     private readonly usersSrv: UsersService,
@@ -36,13 +35,12 @@ export class UsersController {
     return {
       code: ResponseCode.OK,
       message: 'Who am I',
-      data: user,
+      data: user ? plainToClass(UserDto, user) : null,
     };
   }
 
   // Tạo tài khoản
   @Post()
-  @Serialize(UserDto)
   @UseGuards(AuthGuard)
   async create(@Body() data: CreateUserDto): Promise<Response> {
     try {
@@ -50,7 +48,7 @@ export class UsersController {
       return {
         code: ResponseCode.OK,
         message: 'Created successfully',
-        data: result,
+        data: result ? plainToClass(UserDto, result) : null,
       };
     } catch (err) {
       return {
@@ -74,7 +72,7 @@ export class UsersController {
       return {
         code: ResponseCode.OK,
         message: 'Signup successfully',
-        data: result,
+        data: result ? plainToClass(UserDto, result) : null,
       };
     } catch (err) {
       return {
@@ -98,7 +96,7 @@ export class UsersController {
       return {
         code: ResponseCode.OK,
         message: 'Signin successfully',
-        data: result,
+        data: result ? plainToClass(UserDto, result) : null,
       };
     } catch (err) {
       return {
@@ -143,7 +141,7 @@ export class UsersController {
         code: ResponseCode.OK,
         message: 'Found',
         data: {
-          list: result,
+          list: result.map((u: UserDto) => plainToClass(UserDto, u)),
           total: result.length,
         },
       };
@@ -163,7 +161,7 @@ export class UsersController {
       return {
         code: ResponseCode.OK,
         message: 'Found',
-        data: result,
+        data: result ? plainToClass(UserDto, result) : null,
       };
     } catch (err) {
       return {
@@ -175,7 +173,6 @@ export class UsersController {
   }
 
   @Put(':id')
-  @Serialize(UserDto)
   @UseGuards(AuthGuard)
   async update(
     @Param('id') id: string,
@@ -186,7 +183,7 @@ export class UsersController {
       return {
         code: ResponseCode.OK,
         message: 'Updated successfully',
-        data: result,
+        data: result ? plainToClass(UserDto, result) : null,
       };
     } catch (err) {
       return {
@@ -200,11 +197,11 @@ export class UsersController {
   @Delete(':id')
   async delete(@Param('id') id: string): Promise<Response> {
     try {
-      const result = await this.usersSrv.softDelete(+id);
+      const _ = await this.usersSrv.softDelete(+id);
       return {
         code: ResponseCode.OK,
         message: 'Deleted successfully',
-        data: result,
+        data: null,
       };
     } catch (err) {
       return {
