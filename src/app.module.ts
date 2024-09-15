@@ -15,6 +15,7 @@ import { AuthoritiesModule } from './modules/system/authorities/authorities.modu
 // Import module production
 import { BlogsModule } from '@production/blogs/blogs.module';
 import { ApisModule } from './modules/system/apis/apis.module';
+import { MenusModule } from './modules/system/menus/menus.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ApisModule } from './modules/system/apis/apis.module';
     PrismaModule,
     AuthoritiesModule,
     ApisModule,
+    MenusModule,
   ],
   controllers: [AppController],
   providers: [
