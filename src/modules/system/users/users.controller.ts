@@ -39,6 +39,24 @@ export class UsersController {
     };
   }
 
+  @Post('refreshSession')
+  async refreshSession(@Body() data: { uuid: string }): Promise<Response> {
+    try {
+      const result = await this.usersSrv.findOne('uuid', data.uuid);
+      return {
+        code: ResponseCode.OK,
+        message: 'Refreshed session successfully',
+        data: result ? { id: result.id } : null,
+      };
+    } catch (err) {
+      return {
+        code: ResponseCode.FAILED,
+        message: err.message,
+        data: null,
+      };
+    }
+  }
+
   // Tạo tài khoản
   @Post()
   @UseGuards(AuthGuard)
