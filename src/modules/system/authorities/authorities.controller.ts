@@ -44,7 +44,7 @@ export class AuthoritiesController {
     @Query('name') name: string = '',
   ): Promise<Response> {
     try {
-      const result = await this.authoritiesSrv.findMany({
+      const [result, count] = await this.authoritiesSrv.findMany({
         getAll: !!getAll,
         pageNumber: +pageNumber,
         pageSize: +pageSize,
@@ -55,7 +55,7 @@ export class AuthoritiesController {
         message: 'Found',
         data: {
           list: result,
-          total: result.length,
+          total: count,
         },
       };
     } catch (err) {

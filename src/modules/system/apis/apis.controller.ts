@@ -47,7 +47,7 @@ export class ApisController {
     @Query('method') method: string = '',
   ): Promise<Response> {
     try {
-      const result = await this.apisSrv.findMany({
+      const [result, count] = await this.apisSrv.findMany({
         getAll: !!getAll,
         pageNumber: +pageNumber,
         pageSize: +pageSize,
@@ -61,7 +61,7 @@ export class ApisController {
         message: 'Found',
         data: {
           list: result,
-          total: result.length,
+          total: count,
         },
       };
     } catch (err) {

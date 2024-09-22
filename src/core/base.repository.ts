@@ -29,7 +29,12 @@ export class BaseRepository {
       queryMetadata.skip = (pageInfo.pageNumber - 1) * pageInfo.pageSize;
     }
 
-    return await this.prisma[this.tableName].findMany(queryMetadata);
+    return Promise.all([
+      this.prisma[this.tableName].findMany(queryMetadata),
+      this.prisma[this.tableName].count({
+        where: queryMetadata.where,
+      }),
+    ]);
   }
 
   async update(id: number, data: any) {

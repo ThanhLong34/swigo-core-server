@@ -46,7 +46,7 @@ export class UsersController {
   ): Promise<Response> {
     try {
       const result = await this.usersSrv.findOne('uuid', data.uuid);
-      session.userId = result?.id || null
+      session.userId = result?.id || null;
 
       return {
         code: ResponseCode.OK,
@@ -151,7 +151,7 @@ export class UsersController {
     @Query('nickName') nickName: string = '',
   ): Promise<Response> {
     try {
-      const result = await this.usersSrv.findMany({
+      const [result, count] = await this.usersSrv.findMany({
         getAll: !!getAll,
         pageNumber: +pageNumber,
         pageSize: +pageSize,
@@ -165,7 +165,7 @@ export class UsersController {
         message: 'Found',
         data: {
           list: result.map((u: UserDto) => plainToClass(UserDto, u)),
-          total: result.length,
+          total: count,
         },
       };
     } catch (err) {
