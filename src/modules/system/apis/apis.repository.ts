@@ -4,6 +4,7 @@ import { PageInfo } from '@/types/request/page-info.type';
 import { Injectable } from '@nestjs/common';
 import { Api } from './apis.type';
 import { QueryMetadata } from '@/types/request/query-metadata.type';
+import { PaginationResponse } from '@/types/response/response.type';
 
 @Injectable()
 export class ApisRepository extends BaseRepository {
@@ -11,7 +12,7 @@ export class ApisRepository extends BaseRepository {
     super(prisma, 'sys_apis' /* table name */);
   }
 
-  async findMany(pageInfo: PageInfo & Api) {
+  async findMany(pageInfo: PageInfo & Api): Promise<PaginationResponse> {
     const queryMetadata: QueryMetadata = {
       where: {},
     };

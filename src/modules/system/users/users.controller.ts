@@ -151,7 +151,7 @@ export class UsersController {
     @Query('nickName') nickName: string = '',
   ): Promise<Response> {
     try {
-      const [result, count] = await this.usersSrv.findMany({
+      const result = await this.usersSrv.findMany({
         getAll: !!getAll,
         pageNumber: +pageNumber,
         pageSize: +pageSize,
@@ -164,8 +164,8 @@ export class UsersController {
         code: ResponseCode.OK,
         message: 'Found',
         data: {
-          list: result.map((u: UserDto) => plainToClass(UserDto, u)),
-          total: count,
+          ...result,
+          list: result.list.map((u: UserDto) => plainToClass(UserDto, u)),
         },
       };
     } catch (err) {

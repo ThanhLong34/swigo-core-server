@@ -4,6 +4,7 @@ import { PrismaService } from '@/prisma/prisma.service';
 import { PageInfo } from '@/types/request/page-info.type';
 import { QueryMetadata } from '@/types/request/query-metadata.type';
 import { Authority } from './authorities.type';
+import { PaginationResponse } from '@/types/response/response.type';
 
 @Injectable()
 export class AuthoritiesRepository extends BaseRepository {
@@ -11,7 +12,7 @@ export class AuthoritiesRepository extends BaseRepository {
     super(prisma, 'sys_authorities' /* table name */);
   }
 
-  async findMany(pageInfo: PageInfo & Authority) {
+  async findMany(pageInfo: PageInfo & Authority): Promise<PaginationResponse> {
     const queryMetadata: QueryMetadata = {
       where: {},
     };

@@ -1,3 +1,5 @@
+import { PaginationResponse } from '@/types/response/response.type';
+
 export class BaseService {
   constructor(protected readonly repo: any) {}
 
@@ -14,7 +16,7 @@ export class BaseService {
     return record;
   }
 
-  async findMany(pageInfo: any) {
+  async findMany(pageInfo: any): Promise<PaginationResponse> {
     return await this.repo.findMany(pageInfo);
   }
 

@@ -47,7 +47,7 @@ export class MenusController {
     @Query('title') title: string = '',
   ): Promise<Response> {
     try {
-      const [result, count] = await this.menusSrv.findMany({
+      const result = await this.menusSrv.findMany({
         getAll: !!getAll,
         pageNumber: +pageNumber,
         pageSize: +pageSize,
@@ -59,10 +59,7 @@ export class MenusController {
       return {
         code: ResponseCode.OK,
         message: 'Found',
-        data: {
-          list: result,
-          total: count,
-        },
+        data: result,
       };
     } catch (err) {
       return {

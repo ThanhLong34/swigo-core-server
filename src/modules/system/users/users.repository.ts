@@ -4,6 +4,7 @@ import { BaseRepository } from '@/core/base.repository';
 import { PageInfo } from '@/types/request/page-info.type';
 import { QueryMetadata } from '@/types/request/query-metadata.type';
 import { User } from './users.type';
+import { PaginationResponse } from '@/types/response/response.type';
 
 @Injectable()
 export class UsersRepository extends BaseRepository {
@@ -11,7 +12,7 @@ export class UsersRepository extends BaseRepository {
     super(prisma, 'sys_users' /* table name */);
   }
 
-  async findMany(pageInfo: PageInfo & User) {
+  async findMany(pageInfo: PageInfo & User): Promise<PaginationResponse> {
     const queryMetadata: QueryMetadata = {
       where: {},
     };

@@ -1,6 +1,7 @@
 import { PageInfo } from '@/types/request/page-info.type';
 import { QueryMetadata } from '@/types/request/query-metadata.type';
 import { PrismaService } from '@/prisma/prisma.service';
+import { PaginationResponse } from '@/types/response/response.type';
 
 export class BaseRepository {
   constructor(
@@ -21,7 +22,10 @@ export class BaseRepository {
     });
   }
 
-  async findMany(pageInfo: PageInfo, queryMetadata: QueryMetadata = {}) {
+  async findMany(
+    pageInfo: PageInfo,
+    queryMetadata: QueryMetadata = {},
+  ): Promise<PaginationResponse> {
     queryMetadata.where.deletedAt = null;
 
     if (!pageInfo.getAll) {
@@ -29,12 +33,25 @@ export class BaseRepository {
       queryMetadata.skip = (pageInfo.pageNumber - 1) * pageInfo.pageSize;
     }
 
-    return Promise.all([
+    const [list, totalItems] = await Promise.all([
       this.prisma[this.tableName].findMany(queryMetadata),
       this.prisma[this.tableName].count({
         where: queryMetadata.where,
       }),
     ]);
+
+    const totalPages =
+      totalItems && pageInfo.pageSize
+        ? Math.ceil(totalItems / pageInfo.pageSize)
+        : 0;
+
+    return Promise.resolve({
+      list: list ?? [],
+      totalPages: totalPages ?? 0,
+      totalItems: totalItems ?? 0,
+      pageSize: pageInfo.pageSize ?? 0,
+      pageNumber: pageInfo.pageNumber ?? 0,
+    });
   }
 
   async update(id: number, data: any) {
