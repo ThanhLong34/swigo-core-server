@@ -40,9 +40,14 @@ export class UsersController {
   }
 
   @Post('refreshSession')
-  async refreshSession(@Body() data: { uuid: string }): Promise<Response> {
+  async refreshSession(
+    @Body() data: { uuid: string },
+    @Session() session: any,
+  ): Promise<Response> {
     try {
       const result = await this.usersSrv.findOne('uuid', data.uuid);
+      session.userId = result?.id || null
+
       return {
         code: ResponseCode.OK,
         message: 'Refreshed session successfully',
