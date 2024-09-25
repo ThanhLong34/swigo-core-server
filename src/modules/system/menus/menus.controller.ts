@@ -47,6 +47,7 @@ export class MenusController {
       new ParseArrayPipe({
         items: String,
         separator: ',',
+        optional: true,
       }),
     )
     sort: string[] = [],

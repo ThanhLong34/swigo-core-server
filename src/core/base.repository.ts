@@ -33,7 +33,7 @@ export class BaseRepository {
       queryMetadata.skip = (pageInfo.pageNumber - 1) * pageInfo.pageSize;
     }
 
-    if (pageInfo.sort) {
+    if (pageInfo.sort?.length) {
       queryMetadata.orderBy = pageInfo.sort.map((s) => {
         const [field, order] = s.split(':');
         return {
