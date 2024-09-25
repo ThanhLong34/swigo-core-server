@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseArrayPipe,
   Post,
   Put,
   Query,
@@ -41,6 +42,14 @@ export class AuthoritiesController {
     @Query('getAll') getAll: string = '',
     @Query('pageNumber') pageNumber: string = '',
     @Query('pageSize') pageSize: string = '',
+    @Query(
+      'sort',
+      new ParseArrayPipe({
+        items: String,
+        separator: ',',
+      }),
+    )
+    sort: string[] = [],
     @Query('name') name: string = '',
   ): Promise<Response> {
     try {
@@ -48,6 +57,7 @@ export class AuthoritiesController {
         getAll: !!getAll,
         pageNumber: +pageNumber,
         pageSize: +pageSize,
+        sort,
         name,
       });
       return {

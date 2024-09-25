@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseArrayPipe,
   Post,
   Put,
   Query,
@@ -41,6 +42,14 @@ export class MenusController {
     @Query('getAll') getAll: string = '',
     @Query('pageNumber') pageNumber: string = '',
     @Query('pageSize') pageSize: string = '',
+    @Query(
+      'sort',
+      new ParseArrayPipe({
+        items: String,
+        separator: ',',
+      }),
+    )
+    sort: string[] = [],
     @Query('name') name: string = '',
     @Query('path') path: string = '',
     @Query('hidden') hidden: boolean = false,
@@ -51,6 +60,7 @@ export class MenusController {
         getAll: !!getAll,
         pageNumber: +pageNumber,
         pageSize: +pageSize,
+        sort,
         name,
         path,
         hidden,

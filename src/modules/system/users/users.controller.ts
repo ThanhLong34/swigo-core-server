@@ -9,6 +9,7 @@ import {
   UseGuards,
   Query,
   Put,
+  ParseArrayPipe,
 } from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UsersService } from './users.service';
@@ -145,6 +146,14 @@ export class UsersController {
     @Query('getAll') getAll: string = '',
     @Query('pageNumber') pageNumber: string = '',
     @Query('pageSize') pageSize: string = '',
+    @Query(
+      'sort',
+      new ParseArrayPipe({
+        items: String,
+        separator: ',',
+      }),
+    )
+    sort: string[] = [],
     @Query('uuid') uuid: string = '',
     @Query('username') username: string = '',
     @Query('email') email: string = '',
@@ -155,6 +164,7 @@ export class UsersController {
         getAll: !!getAll,
         pageNumber: +pageNumber,
         pageSize: +pageSize,
+        sort,
         uuid,
         username,
         email,

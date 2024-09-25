@@ -33,6 +33,15 @@ export class BaseRepository {
       queryMetadata.skip = (pageInfo.pageNumber - 1) * pageInfo.pageSize;
     }
 
+    if (pageInfo.sort) {
+      queryMetadata.orderBy = pageInfo.sort.map((s) => {
+        const [field, order] = s.split(':');
+        return {
+          [field]: order,
+        };
+      });
+    }
+
     const [list, totalItems] = await Promise.all([
       this.prisma[this.tableName].findMany(queryMetadata),
       this.prisma[this.tableName].count({

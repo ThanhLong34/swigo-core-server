@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseArrayPipe,
   Post,
   Put,
   Query,
@@ -41,6 +42,14 @@ export class ApisController {
     @Query('getAll') getAll: string = '',
     @Query('pageNumber') pageNumber: string = '',
     @Query('pageSize') pageSize: string = '',
+    @Query(
+      'sort',
+      new ParseArrayPipe({
+        items: String,
+        separator: ',',
+      }),
+    )
+    sort: string[] = [],
     @Query('path') path: string = '',
     @Query('description') description: string = '',
     @Query('group') group: string = '',
@@ -51,6 +60,7 @@ export class ApisController {
         getAll: !!getAll,
         pageNumber: +pageNumber,
         pageSize: +pageSize,
+        sort,
         path,
         description,
         group,
