@@ -123,7 +123,7 @@ export class ApisController {
   @Delete(':id')
   async delete(@Param('id') id: string): Promise<Response> {
     try {
-      const result = await this.apisSrv.softDelete(+id);
+      const result = await this.apisSrv.softDeleteById(+id);
       return {
         code: ResponseCode.OK,
         message: 'Deleted successfully',

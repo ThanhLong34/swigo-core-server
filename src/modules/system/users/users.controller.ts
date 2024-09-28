@@ -30,6 +30,34 @@ export class UsersController {
     private readonly authSrv: AuthService,
   ) {}
 
+  @Delete('deleteByIds')
+  @UseGuards(AuthGuard)
+  async deleteByIds(
+    @Query(
+      'ids',
+      new ParseArrayPipe({
+        items: Number,
+        separator: ',',
+      }),
+    )
+    ids: number[] = [],
+  ): Promise<Response> {
+    try {
+      const _ = await this.usersSrv.softDeleteByIds(ids);
+      return {
+        code: ResponseCode.OK,
+        message: 'Deleted many successfully',
+        data: null,
+      };
+    } catch (err) {
+      return {
+        code: ResponseCode.FAILED,
+        message: err.message,
+        data: null,
+      };
+    }
+  }
+
   @Get('whoami')
   @UseGuards(AuthGuard)
   async whoAmI(@CurrentUser() user: UserDto): Promise<Response> {
@@ -53,26 +81,6 @@ export class UsersController {
         code: ResponseCode.OK,
         message: 'Refreshed session successfully',
         data: result ? { id: result.id } : null,
-      };
-    } catch (err) {
-      return {
-        code: ResponseCode.FAILED,
-        message: err.message,
-        data: null,
-      };
-    }
-  }
-
-  // Tạo tài khoản
-  @Post()
-  @UseGuards(AuthGuard)
-  async create(@Body() data: CreateUserDto): Promise<Response> {
-    try {
-      const result = await this.usersSrv.create(data);
-      return {
-        code: ResponseCode.OK,
-        message: 'Created successfully',
-        data: result ? plainToClass(UserDto, result) : null,
       };
     } catch (err) {
       return {
@@ -143,9 +151,9 @@ export class UsersController {
 
   @Get()
   async findMany(
-    @Query('getAll') getAll: string = '',
-    @Query('pageNumber') pageNumber: string = '',
-    @Query('pageSize') pageSize: string = '',
+    @Query('getAll') getAll: boolean | undefined = undefined,
+    @Query('pageNumber') pageNumber: number | undefined = undefined,
+    @Query('pageSize') pageSize: number | undefined = undefined,
     @Query(
       'sort',
       new ParseArrayPipe({
@@ -189,7 +197,7 @@ export class UsersController {
   }
 
   @Get(':id')
-  async findById(@Param('id') id: string): Promise<Response> {
+  async findById(@Param('id') id: number): Promise<Response> {
     try {
       const result = await this.usersSrv.findOne('id', +id);
       return {
@@ -206,10 +214,30 @@ export class UsersController {
     }
   }
 
+  // Tạo tài khoản
+  @Post()
+  @UseGuards(AuthGuard)
+  async create(@Body() data: CreateUserDto): Promise<Response> {
+    try {
+      const result = await this.usersSrv.create(data);
+      return {
+        code: ResponseCode.OK,
+        message: 'Created successfully',
+        data: result ? plainToClass(UserDto, result) : null,
+      };
+    } catch (err) {
+      return {
+        code: ResponseCode.FAILED,
+        message: err.message,
+        data: null,
+      };
+    }
+  }
+
   @Put(':id')
   @UseGuards(AuthGuard)
   async update(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Body() data: UpdateUserDto,
   ): Promise<Response> {
     try {
@@ -229,9 +257,10 @@ export class UsersController {
   }
 
   @Delete(':id')
-  async delete(@Param('id') id: string): Promise<Response> {
+  @UseGuards(AuthGuard)
+  async delete(@Param('id') id: number): Promise<Response> {
     try {
-      const _ = await this.usersSrv.softDelete(+id);
+      const _ = await this.usersSrv.softDeleteById(+id);
       return {
         code: ResponseCode.OK,
         message: 'Deleted successfully',

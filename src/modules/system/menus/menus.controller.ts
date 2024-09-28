@@ -39,9 +39,9 @@ export class MenusController {
 
   @Get()
   async findMany(
-    @Query('getAll') getAll: string = '',
-    @Query('pageNumber') pageNumber: string = '',
-    @Query('pageSize') pageSize: string = '',
+    @Query('getAll') getAll: boolean | undefined = undefined,
+    @Query('pageNumber') pageNumber: number | undefined = undefined,
+    @Query('pageSize') pageSize: number | undefined = undefined,
     @Query(
       'sort',
       new ParseArrayPipe({
@@ -82,7 +82,7 @@ export class MenusController {
   }
 
   @Get(':id')
-  async findById(@Param('id') id: string): Promise<Response> {
+  async findById(@Param('id') id: number): Promise<Response> {
     try {
       const result = await this.menusSrv.findOne('id', +id);
       return {
@@ -101,7 +101,7 @@ export class MenusController {
 
   @Put(':id')
   async update(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Body() data: UpdateMenuDto,
   ): Promise<Response> {
     try {
@@ -121,9 +121,9 @@ export class MenusController {
   }
 
   @Delete(':id')
-  async delete(@Param('id') id: string): Promise<Response> {
+  async delete(@Param('id') id: number): Promise<Response> {
     try {
-      const result = await this.menusSrv.softDelete(+id);
+      const result = await this.menusSrv.softDeleteById(+id);
       return {
         code: ResponseCode.OK,
         message: 'Deleted successfully',

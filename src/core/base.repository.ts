@@ -70,9 +70,22 @@ export class BaseRepository {
     });
   }
 
-  async softDelete(id: number) {
+  async softDeleteById(id: number) {
     return await this.prisma[this.tableName].update({
       where: { id },
+      data: {
+        deletedAt: new Date(),
+      },
+    });
+  }
+
+  async softDeleteByIds(ids: number[]) {
+    return await this.prisma[this.tableName].updateMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
       data: {
         deletedAt: new Date(),
       },

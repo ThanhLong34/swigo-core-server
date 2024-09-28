@@ -39,9 +39,9 @@ export class AuthoritiesController {
 
   @Get()
   async findMany(
-    @Query('getAll') getAll: string = '',
-    @Query('pageNumber') pageNumber: string = '',
-    @Query('pageSize') pageSize: string = '',
+    @Query('getAll') getAll: boolean | undefined = undefined,
+    @Query('pageNumber') pageNumber: number | undefined = undefined,
+    @Query('pageSize') pageSize: number | undefined = undefined,
     @Query(
       'sort',
       new ParseArrayPipe({
@@ -117,7 +117,7 @@ export class AuthoritiesController {
   @Delete(':id')
   async delete(@Param('id') id: string): Promise<Response> {
     try {
-      const result = await this.authoritiesSrv.softDelete(+id);
+      const result = await this.authoritiesSrv.softDeleteById(+id);
       return {
         code: ResponseCode.OK,
         message: 'Deleted successfully',
