@@ -7,6 +7,8 @@ import { PrismaService } from '@/prisma/prisma.service';
 import { Prisma } from '@prisma/client';
 import { PaginationResponse } from '@/types/response/response.type';
 
+const sortValuesOmited = ['null', 'undefined'];
+
 export class BaseRepository {
   constructor(
     protected readonly prisma: PrismaService,
@@ -24,6 +26,10 @@ export class BaseRepository {
 
     // Check if the sort fields are valid
     pageInfo.sort.forEach((s) => {
+      if (sortValuesOmited.includes(s)) {
+        return;
+      }
+
       const [field] = s.split(':');
       if (!validFields.find((f) => f.name === field)) {
         throw new Error(`Invalid field when sort: ${field}`);
@@ -63,18 +69,22 @@ export class BaseRepository {
       this._validateSort(pageInfo);
 
       // Set the order by
-      queryMetadata.orderBy = pageInfo.sort.map((s) => {
-        const [field, order] = s.split(':');
+      queryMetadata.orderBy = pageInfo.sort
+        .filter((s) => !sortValuesOmited.includes(s))
+        .map((s) => {
+          const [field, order] = s.split(':');
 
-        // Check if the order is valid
-        if (!Object.values(QueryWithOrder).includes(order as QueryWithOrder)) {
-          throw new Error(`Invalid order: ${order}`);
-        }
+          // Check if the order is valid
+          if (
+            !Object.values(QueryWithOrder).includes(order as QueryWithOrder)
+          ) {
+            throw new Error(`Invalid order: ${order}`);
+          }
 
-        return {
-          [field]: order,
-        };
-      });
+          return {
+            [field]: order,
+          };
+        });
     }
 
     const [list, totalItems] = await Promise.all([
