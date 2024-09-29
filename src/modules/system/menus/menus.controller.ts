@@ -3,8 +3,12 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
+  HttpStatus,
   Param,
   ParseArrayPipe,
+  ParseBoolPipe,
+  ParseIntPipe,
   Post,
   Put,
   Query,
@@ -39,14 +43,48 @@ export class MenusController {
 
   @Get()
   async findMany(
-    @Query('getAll') getAll: boolean | undefined = undefined,
-    @Query('pageNumber') pageNumber: number | undefined = undefined,
-    @Query('pageSize') pageSize: number | undefined = undefined,
+    @Query(
+      'getAll',
+      new ParseBoolPipe({
+        errorHttpStatusCode: 400,
+        exceptionFactory: (err: string) => {
+          throw new HttpException(`${err}: getAll`, HttpStatus.BAD_REQUEST);
+        },
+        optional: true,
+      }),
+    )
+    getAll: boolean = false,
+    @Query(
+      'pageNumber',
+      new ParseIntPipe({
+        errorHttpStatusCode: 400,
+        exceptionFactory: (err: string) => {
+          throw new HttpException(`${err}: pageNumber`, HttpStatus.BAD_REQUEST);
+        },
+        optional: true,
+      }),
+    )
+    pageNumber: number = 1,
+    @Query(
+      'pageSize',
+      new ParseIntPipe({
+        errorHttpStatusCode: 400,
+        exceptionFactory: (err: string) => {
+          throw new HttpException(`${err}: pageSize`, HttpStatus.BAD_REQUEST);
+        },
+        optional: true,
+      }),
+    )
+    pageSize: number = 10,
     @Query(
       'sort',
       new ParseArrayPipe({
         items: String,
         separator: ',',
+        errorHttpStatusCode: 400,
+        exceptionFactory: (err: string) => {
+          throw new HttpException(`${err}: sort`, HttpStatus.BAD_REQUEST);
+        },
         optional: true,
       }),
     )
