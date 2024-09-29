@@ -10,6 +10,10 @@ import {
   Query,
   Put,
   ParseArrayPipe,
+  ParseBoolPipe,
+  HttpException,
+  HttpStatus,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UsersService } from './users.service';
@@ -151,14 +155,48 @@ export class UsersController {
 
   @Get()
   async findMany(
-    @Query('getAll') getAll: boolean | undefined = undefined,
-    @Query('pageNumber') pageNumber: number | undefined = undefined,
-    @Query('pageSize') pageSize: number | undefined = undefined,
+    @Query(
+      'getAll',
+      new ParseBoolPipe({
+        errorHttpStatusCode: 400,
+        exceptionFactory: (err: string) => {
+          throw new HttpException(`${err}: getAll`, HttpStatus.BAD_REQUEST);
+        },
+        optional: true,
+      }),
+    )
+    getAll: boolean = false,
+    @Query(
+      'pageNumber',
+      new ParseIntPipe({
+        errorHttpStatusCode: 400,
+        exceptionFactory: (err: string) => {
+          throw new HttpException(`${err}: pageNumber`, HttpStatus.BAD_REQUEST);
+        },
+        optional: true,
+      }),
+    )
+    pageNumber: number = 1,
+    @Query(
+      'pageSize',
+      new ParseIntPipe({
+        errorHttpStatusCode: 400,
+        exceptionFactory: (err: string) => {
+          throw new HttpException(`${err}: pageSize`, HttpStatus.BAD_REQUEST);
+        },
+        optional: true,
+      }),
+    )
+    pageSize: number = 10,
     @Query(
       'sort',
       new ParseArrayPipe({
         items: String,
         separator: ',',
+        errorHttpStatusCode: 400,
+        exceptionFactory: (err: string) => {
+          throw new HttpException(`${err}: sort`, HttpStatus.BAD_REQUEST);
+        },
         optional: true,
       }),
     )
@@ -170,9 +208,9 @@ export class UsersController {
   ): Promise<Response> {
     try {
       const result = await this.usersSrv.findMany({
-        getAll: !!getAll,
-        pageNumber: +pageNumber,
-        pageSize: +pageSize,
+        getAll,
+        pageNumber,
+        pageSize,
         sort,
         uuid,
         username,

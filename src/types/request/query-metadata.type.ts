@@ -4,3 +4,8 @@ export interface QueryMetadata {
   skip?: number;
   orderBy?: any[];
 }
+
+export enum QueryWithOrder {
+  ASC = 'asc',
+  DESC = 'desc',
+}

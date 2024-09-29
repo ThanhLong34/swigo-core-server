@@ -1,6 +1,7 @@
 import { PageInfo } from '@/types/request/page-info.type';
-import { QueryMetadata } from '@/types/request/query-metadata.type';
+import { QueryMetadata, QueryWithOrder } from '@/types/request/query-metadata.type';
 import { PrismaService } from '@/prisma/prisma.service';
+import { Prisma } from '@prisma/client';
 import { PaginationResponse } from '@/types/response/response.type';
 
 export class BaseRepository {
@@ -29,13 +30,40 @@ export class BaseRepository {
     queryMetadata.where.deletedAt = null;
 
     if (!pageInfo.getAll) {
+      if (!pageInfo.pageSize || !pageInfo.pageNumber) {
+        throw new Error('pageSize, pageNumber are required');
+      }
+
       queryMetadata.take = pageInfo.pageSize;
       queryMetadata.skip = (pageInfo.pageNumber - 1) * pageInfo.pageSize;
     }
 
     if (pageInfo.sort?.length) {
+      // Get the valid fields for the table
+      const validFields = Prisma.dmmf.datamodel.models.find(
+        (i) => i.name === this.tableName,
+      )?.fields;
+      if (!validFields) {
+        throw new Error(`Invalid table name: ${this.tableName}`);
+      }
+
+      // Check if the sort fields are valid
+      pageInfo.sort.forEach((s) => {
+        const [field] = s.split(':');
+        if (!validFields.find((f) => f.name === field)) {
+          throw new Error(`Invalid field: ${field}`);
+        }
+      });
+
+      // Set the order by
       queryMetadata.orderBy = pageInfo.sort.map((s) => {
         const [field, order] = s.split(':');
+
+        // Check if the order is valid
+        if (!Object.values(QueryWithOrder).includes(order as QueryWithOrder)) {
+          throw new Error(`Invalid order: ${order}`);
+        }
+
         return {
           [field]: order,
         };
