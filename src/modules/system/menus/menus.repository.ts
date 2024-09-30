@@ -4,6 +4,7 @@ import { PageInfo } from '@/types/request/page-info.type';
 import { Injectable } from '@nestjs/common';
 import { Menu } from './menus.type';
 import { QueryMetadata } from '@/types/request/query-metadata.type';
+import { PaginationResponse } from '@/types/response/response.type';
 
 @Injectable()
 export class MenusRepository extends BaseRepository {
@@ -11,7 +12,7 @@ export class MenusRepository extends BaseRepository {
     super(prisma, 'sys_menus' /* table name */);
   }
 
-  async findMany(pageInfo: PageInfo & Menu) {
+  async findMany(pageInfo: PageInfo & Menu): Promise<PaginationResponse> {
     const queryMetadata: QueryMetadata = {
       where: {},
     };

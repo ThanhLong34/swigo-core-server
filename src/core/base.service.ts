@@ -1,3 +1,5 @@
+import { PaginationResponse } from '@/types/response/response.type';
+
 export class BaseService {
   constructor(protected readonly repo: any) {}
 
@@ -14,7 +16,7 @@ export class BaseService {
     return record;
   }
 
-  async findMany(pageInfo: any) {
+  async findMany(pageInfo: any): Promise<PaginationResponse> {
     return await this.repo.findMany(pageInfo);
   }
 
@@ -27,12 +29,16 @@ export class BaseService {
     return await this.repo.update(id, data);
   }
 
-  async softDelete(id: number) {
+  async softDeleteById(id: number) {
     const record = await this.findOne('id', id);
     if (!record) {
       throw new Error('Record not found');
     }
 
-    return await this.repo.softDelete(id);
+    return await this.repo.softDeleteById(id);
+  }
+
+  async softDeleteByIds(ids: number[]) {
+    return await this.repo.softDeleteByIds(ids);
   }
 }

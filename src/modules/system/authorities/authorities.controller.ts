@@ -3,7 +3,12 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
+  HttpStatus,
   Param,
+  ParseArrayPipe,
+  ParseBoolPipe,
+  ParseIntPipe,
   Post,
   Put,
   Query,
@@ -38,9 +43,52 @@ export class AuthoritiesController {
 
   @Get()
   async findMany(
-    @Query('getAll') getAll: string = '',
-    @Query('pageNumber') pageNumber: string = '',
-    @Query('pageSize') pageSize: string = '',
+    @Query(
+      'getAll',
+      new ParseBoolPipe({
+        errorHttpStatusCode: 400,
+        exceptionFactory: (err: string) => {
+          throw new HttpException(`${err}: getAll`, HttpStatus.BAD_REQUEST);
+        },
+        optional: true,
+      }),
+    )
+    getAll: boolean = false,
+    @Query(
+      'pageNumber',
+      new ParseIntPipe({
+        errorHttpStatusCode: 400,
+        exceptionFactory: (err: string) => {
+          throw new HttpException(`${err}: pageNumber`, HttpStatus.BAD_REQUEST);
+        },
+        optional: true,
+      }),
+    )
+    pageNumber: number = 1,
+    @Query(
+      'pageSize',
+      new ParseIntPipe({
+        errorHttpStatusCode: 400,
+        exceptionFactory: (err: string) => {
+          throw new HttpException(`${err}: pageSize`, HttpStatus.BAD_REQUEST);
+        },
+        optional: true,
+      }),
+    )
+    pageSize: number = 10,
+    @Query(
+      'sort',
+      new ParseArrayPipe({
+        items: String,
+        separator: ',',
+        errorHttpStatusCode: 400,
+        exceptionFactory: (err: string) => {
+          throw new HttpException(`${err}: sort`, HttpStatus.BAD_REQUEST);
+        },
+        optional: true,
+      }),
+    )
+    sort: string[] = [],
     @Query('name') name: string = '',
   ): Promise<Response> {
     try {
@@ -48,15 +96,13 @@ export class AuthoritiesController {
         getAll: !!getAll,
         pageNumber: +pageNumber,
         pageSize: +pageSize,
+        sort,
         name,
       });
       return {
         code: ResponseCode.OK,
         message: 'Found',
-        data: {
-          list: result,
-          total: result.length,
-        },
+        data: result,
       };
     } catch (err) {
       return {
@@ -109,7 +155,7 @@ export class AuthoritiesController {
   @Delete(':id')
   async delete(@Param('id') id: string): Promise<Response> {
     try {
-      const result = await this.authoritiesSrv.softDelete(+id);
+      const result = await this.authoritiesSrv.softDeleteById(+id);
       return {
         code: ResponseCode.OK,
         message: 'Deleted successfully',
